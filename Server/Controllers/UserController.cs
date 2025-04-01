@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data.Models;
+using Data.Services;
 using Database.Services;
 using Database.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -13,6 +14,7 @@ using Org.BouncyCastle.Asn1.X509;
 using AutoMapper;
 using Server.DTOModels;
 using NuGet.LibraryModel;
+using Org.BouncyCastle.Crypto.Generators;
 
 namespace Server.Controllers
 {
@@ -69,6 +71,7 @@ namespace Server.Controllers
 				return BadRequest();
 			try
             {
+				user.Password = Encryptor.CreateMD5(user.Password);
 				await _services.Update(_mapper.Map<User>(user));
             }
             catch (DbUpdateConcurrencyException)
@@ -91,7 +94,8 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<ActionResult> PostUser(CreateUserDTO user)
         {
-            if (!await _services.Create(_mapper.Map<User>(user)))
+			user.Password = Encryptor.CreateMD5(user.Password);
+			if (!await _services.Create(_mapper.Map<User>(user)))
                 return Problem("Couldn`t add user");
             return StatusCode(201);
         }
@@ -118,5 +122,75 @@ namespace Server.Controllers
         {
             return (_services.GetById(id) != null);
         }
-    }
+
+		[HttpPost("login")]
+		public async Task<IActionResult> Login([FromBody] LoginRequest request)
+		{
+            var users = await _services.GetAll();
+			var user = users.FirstOrDefault(u => u.Email == request.Email);
+
+			if (user == null)
+				return Unauthorized("Invalid email or password");
+
+			string hashedInputPassword = Encryptor.CreateMD5(request.Password);
+
+
+
+			if (hashedInputPassword != user.Password)
+				return Unauthorized("Invalid email or password");
+
+			var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+
+			return Ok(new { Token = token, User = new { user.Id, user.Name, user.Email } });
+		}
+		public class LoginRequest
+		{
+			public string Email { get; set; }
+			public string Password { get; set; }
+		}
+		[HttpPost("register")]
+		public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+		{
+			var users = await _services.GetAll();
+			var existingUser = users.FirstOrDefault(u => u.Email == request.Email);
+
+			if (existingUser != null)
+				return BadRequest("Email already in use");
+
+			string hashedPassword = Encryptor.CreateMD5(request.Password);
+
+			var newUser = new User
+			{
+				Name = request.Name,
+				Surname = request.Surname,
+				Email = request.Email,
+				Password = hashedPassword,
+				ContactNumber = request.ContactNumber
+			};
+
+			await _services.Create(newUser);
+
+			return Ok(new
+			{
+				Message = "Registration successful",
+				User = new
+				{
+					newUser.Id,
+					newUser.Name,
+					newUser.Surname,
+					newUser.Email,
+					newUser.ContactNumber
+				}
+			});
+		}
+
+		public class RegisterRequest
+		{
+			public string Name { get; set; }
+			public string Surname { get; set; }
+			public string Email { get; set; }
+			public string Password { get; set; }
+			public string ContactNumber { get; set; }
+		}
+	}
 }

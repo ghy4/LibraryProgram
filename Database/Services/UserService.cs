@@ -31,6 +31,11 @@ namespace Database.Services
 			var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
 			return user;
 		}
+		public async Task<User?> GetByEmail(string email)
+		{
+			var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
+			return user;
+		}
 		public async Task<ICollection<Review>?> GetReviewsAsync(int id)
 		{
 			var reviews = await _dbContext.Reviews.Where(x => x.UserId == id).ToListAsync();

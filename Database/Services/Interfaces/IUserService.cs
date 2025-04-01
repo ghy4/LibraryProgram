@@ -10,5 +10,7 @@ namespace Database.Services.Interfaces
     public interface IUserService : IService<User>
     {
         public Task<ICollection<Review>?> GetReviewsAsync(int id);
-    }
+        public Task<User?> GetByEmail(string email);
+
+	}
 }
