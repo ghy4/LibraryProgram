@@ -13,13 +13,13 @@ using System.Text.Unicode;
 
 namespace ClientWeb
 {
-	public partial class SingInForm : Form
+	public partial class SignInForm : Form
 	{
 		private readonly HttpClient _httpClient;
-		public SingInForm()
+		public SignInForm()
 		{
 			InitializeComponent();
-			_httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7221/") };
+			_httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7221")};
 		}
 
 		private async void SingInButton_Click(object sender, EventArgs e)
@@ -66,7 +66,7 @@ namespace ClientWeb
 
 		private void Sing_up_Click(object sender, EventArgs e)
 		{
-			SingUpForm singInForm = new SingUpForm();
+			SignUpForm singInForm = new SignUpForm();
 			singInForm.Show();
 			this.Hide();
 		}
@@ -74,10 +74,10 @@ namespace ClientWeb
 	public class LoginResponse
 	{
 		public string Token { get; set; }
-		public UserInfo User { get; set; }
+		public UserInfoLogin User { get; set; }
 	}
 
-	public class UserInfo
+	public class UserInfoLogin
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }

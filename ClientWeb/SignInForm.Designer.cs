@@ -1,6 +1,6 @@
 ﻿namespace ClientWeb
 {
-	partial class SingInForm
+	partial class SignInForm
 	{
 		/// <summary>
 		///  Required designer variable.
@@ -39,9 +39,9 @@
 			// SingInButton
 			// 
 			SingInButton.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-			SingInButton.Location = new Point(346, 540);
+			SingInButton.Location = new Point(296, 540);
 			SingInButton.Name = "SingInButton";
-			SingInButton.Size = new Size(200, 60);
+			SingInButton.Size = new Size(250, 60);
 			SingInButton.TabIndex = 0;
 			SingInButton.Text = "Sing In";
 			SingInButton.UseVisualStyleBackColor = true;
@@ -91,15 +91,15 @@
 			// SingUpButton
 			// 
 			SingUpButton.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-			SingUpButton.Location = new Point(622, 540);
+			SingUpButton.Location = new Point(572, 540);
 			SingUpButton.Name = "SingUpButton";
-			SingUpButton.Size = new Size(200, 60);
+			SingUpButton.Size = new Size(250, 60);
 			SingUpButton.TabIndex = 5;
 			SingUpButton.Text = "Sing up";
 			SingUpButton.UseVisualStyleBackColor = true;
 			SingUpButton.Click += Sing_up_Click;
 			// 
-			// SingIn
+			// SingInForm
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
@@ -111,7 +111,7 @@
 			Controls.Add(PasswordTextBox);
 			Controls.Add(EmailTextBox);
 			Controls.Add(SingInButton);
-			Name = "SingIn";
+			Name = "SingInForm";
 			ShowIcon = false;
 			Text = "SingIn";
 			ResumeLayout(false);
