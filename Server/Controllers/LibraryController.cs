@@ -75,9 +75,9 @@ namespace Server.Controllers
 			return NoContent();
 		}
 
-        // POST: api/Library
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+		// POST: api/Library
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpPost]
         public async Task<IActionResult> PostLibrary(CreateLibraryDTO dto)
         {
             var library = _mapper.Map<Library>(dto);
@@ -86,8 +86,18 @@ namespace Server.Controllers
 			return StatusCode(201);
         }
 
-        // DELETE: api/Library/5
-        [HttpDelete("{id}")]
+		[HttpPost("add-book")]
+		public async Task<IActionResult> AddBookToLibrary([FromBody] AddBookToLibraryDTO dto)
+		{
+			var result = await _services.AddBookToLibraryAsync(dto.LibraryId, dto.BookId);
+			if (!result)
+				return NotFound("Library or Book not found.");
+
+			return Ok("Book successfully added to library.");
+		}
+
+		// DELETE: api/Library/5
+		[HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLibrary(int id)
         {
 			var libraries = await _services.GetAll();
@@ -109,5 +119,10 @@ namespace Server.Controllers
         {
             return (_services.GetById(id) != null);
         }
-    }
+		public class AddBookToLibraryDTO
+		{
+			public int BookId { get; set; }
+			public int LibraryId { get; set; }
+		}
+	}
 }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,6 +42,28 @@ namespace Database.Services
 		{
 			var library = await _dbContext.Libraries.Include(b=>b.Books).FirstOrDefaultAsync(x => x.Id == id);
 			return library;
+		}
+
+		public async Task<bool> AddBookToLibraryAsync(int libraryId, int bookId)
+		{
+			var library = await _dbContext.Libraries
+		   .Include(l => l.Books)
+		   .FirstOrDefaultAsync(l => l.Id == libraryId);
+
+			var book = await _dbContext.Books.FindAsync(bookId);
+
+			if (library == null || book == null)
+				return false;
+
+			if (library.Books == null)
+				library.Books = new List<Book>();
+
+			if (!library.Books.Any(b => b.Id == bookId))
+			{
+				library.Books.Add(book);
+				await _dbContext.SaveChangesAsync();
+			}
+			return true;
 		}
 
 		public async Task<bool> RemoveById(int id)

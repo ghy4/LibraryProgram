@@ -33,13 +33,13 @@ namespace Database.Services
 
 		public async Task<ICollection<Book>> GetAll()
 		{
-			var books = await _dbContext.Books.Include(b=>b.Reviews).ToListAsync();
+			var books = await _dbContext.Books.Include(b=>b.Reviews).Include(b=>b.Libraries).ToListAsync();
 			return books;
 		}
 
 		public async Task<Book?> GetById(int id)
 		{
-			var book = await _dbContext.Books.Include(b =>b.Reviews).FirstOrDefaultAsync(x => x.Id == id);
+			var book = await _dbContext.Books.Include(b =>b.Reviews).Include(b=>b.Libraries).FirstOrDefaultAsync(x => x.Id == id);
 			return book;
 		}
 

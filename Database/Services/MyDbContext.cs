@@ -23,5 +23,11 @@ namespace Database.Services
 		{
 			optionsBuilder.UseMySQL(_connectionstring);
 		}
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<Book>()
+				.HasMany(b => b.Libraries)
+				.WithMany(l => l.Books);
+		}
 	}
 }

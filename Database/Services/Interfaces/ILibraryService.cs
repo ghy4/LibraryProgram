@@ -10,5 +10,6 @@ namespace Database.Services.Interfaces
     public interface ILibraryService : IService<Library>
     {
         public Task<ICollection<Book>?> GetBooks(int libraryid);
+        public Task<bool> AddBookToLibraryAsync(int libraryid, int bookid);
     }
 }
