@@ -1,4 +1,7 @@
-﻿namespace ClientWeb
+﻿using System.Windows.Forms;
+using System.Windows.Forms.PropertyGridInternal;
+
+namespace ClientWeb
 {
 	partial class SignInForm
 	{
@@ -34,6 +37,8 @@
 			EmailLabel = new Label();
 			PasswordLabel = new Label();
 			SingUpButton = new Button();
+			PasswordIcon = new PictureBox();
+			((System.ComponentModel.ISupportInitialize)PasswordIcon).BeginInit();
 			SuspendLayout();
 			// 
 			// SingInButton
@@ -42,7 +47,7 @@
 			SingInButton.Location = new Point(296, 540);
 			SingInButton.Name = "SingInButton";
 			SingInButton.Size = new Size(250, 60);
-			SingInButton.TabIndex = 0;
+			SingInButton.TabIndex = 3;
 			SingInButton.Text = "Sing In";
 			SingInButton.UseVisualStyleBackColor = true;
 			SingInButton.Click += SingInButton_Click;
@@ -63,10 +68,10 @@
 			PasswordTextBox.Location = new Point(472, 310);
 			PasswordTextBox.Multiline = true;
 			PasswordTextBox.Name = "PasswordTextBox";
+			PasswordTextBox.PasswordChar = '*';
 			PasswordTextBox.PlaceholderText = "Enter your password";
 			PasswordTextBox.Size = new Size(350, 34);
 			PasswordTextBox.TabIndex = 2;
-			PasswordTextBox.UseSystemPasswordChar = true;
 			// 
 			// EmailLabel
 			// 
@@ -94,26 +99,39 @@
 			SingUpButton.Location = new Point(572, 540);
 			SingUpButton.Name = "SingUpButton";
 			SingUpButton.Size = new Size(250, 60);
-			SingUpButton.TabIndex = 5;
+			SingUpButton.TabIndex = 4;
 			SingUpButton.Text = "Sing up";
 			SingUpButton.UseVisualStyleBackColor = true;
 			SingUpButton.Click += Sing_up_Click;
 			// 
-			// SingInForm
+			// PasswordIcon
+			// 
+			PasswordIcon.Image = Image.FromStream(new MemoryStream(Properties.Resources.password_lock));
+			PasswordIcon.Location = new Point(859, 309);
+			PasswordIcon.Name = "PasswordIcon";
+			PasswordIcon.Size = new Size(34, 34);
+			PasswordIcon.SizeMode = PictureBoxSizeMode.StretchImage;
+			PasswordIcon.TabIndex = 5;
+			PasswordIcon.TabStop = false;
+			PasswordIcon.Click += PasswordIcon_Click;
+			// 
+			// SignInForm
 			// 
 			AutoScaleDimensions = new SizeF(8F, 20F);
 			AutoScaleMode = AutoScaleMode.Font;
 			BackColor = SystemColors.InactiveBorder;
 			ClientSize = new Size(1082, 653);
+			Controls.Add(PasswordIcon);
 			Controls.Add(SingUpButton);
 			Controls.Add(PasswordLabel);
 			Controls.Add(EmailLabel);
 			Controls.Add(PasswordTextBox);
 			Controls.Add(EmailTextBox);
 			Controls.Add(SingInButton);
-			Name = "SingInForm";
+			Name = "SignInForm";
 			ShowIcon = false;
 			Text = "SingIn";
+			((System.ComponentModel.ISupportInitialize)PasswordIcon).EndInit();
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -126,5 +144,6 @@
 		private Label EmailLabel;
 		private Label PasswordLabel;
 		private Button SingUpButton;
+		private PictureBox PasswordIcon;
 	}
 }

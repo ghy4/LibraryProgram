@@ -7,19 +7,25 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Policy;
 using System.Text;
+using System.Drawing;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using System.Windows.Forms;
+using Humanizer.Localisation;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace ClientWeb
 {
 	public partial class SignInForm : Form
 	{
 		private readonly HttpClient _httpClient;
+		private bool flag = true;
+
 		public SignInForm()
 		{
 			InitializeComponent();
-			_httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7221")};
+			_httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7221") };
 		}
 
 		private async void SingInButton_Click(object sender, EventArgs e)
@@ -69,6 +75,27 @@ namespace ClientWeb
 			SignUpForm singInForm = new SignUpForm();
 			singInForm.Show();
 			this.Hide();
+		}
+
+		private void PasswordIcon_Click(object sender, EventArgs e)
+		{
+			if (flag)
+			{
+				using (var ms = new MemoryStream(Properties.Resources.password_lock))
+				{
+					PasswordIcon.Image = Image.FromStream(ms);
+				}
+				PasswordTextBox.UseSystemPasswordChar = false;
+			}
+			else
+			{
+				using (var ms = new MemoryStream(Properties.Resources.password_padlock))
+				{
+					PasswordIcon.Image = Image.FromStream(ms);
+				}
+				PasswordTextBox.UseSystemPasswordChar = true;
+			}
+			flag = !flag;
 		}
 	}
 	public class LoginResponse
