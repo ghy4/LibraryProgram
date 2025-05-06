@@ -30,7 +30,7 @@ namespace ClientWeb
 
 		private async void SingInButton_Click(object sender, EventArgs e)
 		{
-			var email = EmailTextBox.Text;
+			var email = EmailTextBox.Text.Trim();
 			var password = PasswordTextBox.Text;
 
 			if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
@@ -49,13 +49,28 @@ namespace ClientWeb
 				if (response.IsSuccessStatusCode)
 				{
 					string responseBody = await response.Content.ReadAsStringAsync();
-					var loginResponse = JsonSerializer.Deserialize<LoginResponse>(responseBody);
+                    Console.WriteLine(responseBody);
+					var options = new JsonSerializerOptions
+					{
+						PropertyNameCaseInsensitive = true
+					};
+					var loginResponse = JsonSerializer.Deserialize<LoginResponse>(responseBody, options);
 
 					_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
-
-					MainPage mainPage = new MainPage();
-					mainPage.Show();
-					this.Hide();
+					Form nextform = loginResponse.User.Role switch
+					{
+						"Admin" => new AdminPanel(),
+						"User" => new MainPage(),
+					};
+					if (nextform != null)
+					{
+						nextform.Show();
+						this.Hide();
+					}
+					else
+					{
+						MessageBox.Show("Unknown user role.");
+					}
 				}
 				else
 				{
