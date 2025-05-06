@@ -141,7 +141,7 @@ namespace Server.Controllers
 
 			var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
 
-			return Ok(new { Token = token, User = new { user.Id, user.Name, user.Email } });
+			return Ok(new { Token = token, User = new { user.Id, user.Name, user.Email, user.Role} });
 		}
 		public class LoginRequest
 		{
@@ -165,7 +165,8 @@ namespace Server.Controllers
 				Surname = request.Surname,
 				Email = request.Email,
 				Password = hashedPassword,
-				ContactNumber = request.ContactNumber
+				ContactNumber = request.ContactNumber,
+                Role = request.Role
 			};
 
 			await _services.Create(newUser);
@@ -179,7 +180,8 @@ namespace Server.Controllers
 					newUser.Name,
 					newUser.Surname,
 					newUser.Email,
-					newUser.ContactNumber
+					newUser.ContactNumber,
+                    newUser.Role
 				}
 			});
 		}
@@ -191,6 +193,7 @@ namespace Server.Controllers
 			public string Email { get; set; }
 			public string Password { get; set; }
 			public string ContactNumber { get; set; }
+            public string Role { get; set; }
 		}
 	}
 }

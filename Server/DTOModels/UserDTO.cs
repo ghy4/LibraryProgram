@@ -25,5 +25,8 @@ namespace Server.DTOModels
 		[StringLength(15, MinimumLength = 10)]
 		[Required]
 		public string ContactNumber { get; set; }
+		[StringLength(20)]
+		[Required]
+		public string Role { get; set; }
 	}
 }
