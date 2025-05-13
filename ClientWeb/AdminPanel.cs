@@ -49,20 +49,7 @@ namespace ClientWeb
 					Bookslist = string.Join(", ", lib.Books.Select(b => b.Title))
 				});
 
-				dataGridView1.DataSource = data.ToList();
-
-				if (dataGridView1.Columns.Contains("Select"))
-				{
-					dataGridView1.Columns.Remove("Select");
-				}
-				DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn
-				{
-					Name = "Select",
-					HeaderText = "Select",
-					FalseValue = false,
-					TrueValue = true
-				};
-				dataGridView1.Columns.Insert(dataGridView1.Columns.Count, checkBoxColumn);
+				UpdateDataGridView(data.ToList());
 			}
 			catch (Exception ex)
 			{
@@ -97,20 +84,7 @@ namespace ClientWeb
 					b.Rating,
 					Libraries = string.Join(", ", b.Libraries.Select(l => l.Name))
 				});
-				dataGridView1.DataSource = data.ToList();
-
-				if (dataGridView1.Columns.Contains("Select"))
-				{
-					dataGridView1.Columns.Remove("Select");
-				}
-				DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn
-				{
-					Name = "Select",
-					HeaderText = "Select",
-					FalseValue = false,
-					TrueValue = true
-				};
-				dataGridView1.Columns.Insert(dataGridView1.Columns.Count, checkBoxColumn);
+				UpdateDataGridView(data.ToList());
 			}
 			catch (Exception ex)
 			{
@@ -137,20 +111,7 @@ namespace ClientWeb
 				});
 
 
-				dataGridView1.DataSource = _users;
-
-				if (dataGridView1.Columns.Contains("Select"))
-				{
-					dataGridView1.Columns.Remove("Select");
-				}
-				DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn
-				{
-					Name = "Select",
-					HeaderText = "Select",
-					FalseValue = false,
-					TrueValue = true
-				};
-				dataGridView1.Columns.Insert(dataGridView1.Columns.Count, checkBoxColumn);
+				UpdateDataGridView(_users);
 			}
 			catch (Exception ex)
 			{
@@ -184,20 +145,7 @@ namespace ClientWeb
 					Bookslist = string.Join(", ", lib.Books.Select(b => b.Title))
 				});
 
-				dataGridView1.DataSource = data.ToList();
-
-				if (dataGridView1.Columns.Contains("Select"))
-				{
-					dataGridView1.Columns.Remove("Select");
-				}
-				DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn
-				{
-					Name = "Select",
-					HeaderText = "Select",
-					FalseValue = false,
-					TrueValue = true
-				};
-				dataGridView1.Columns.Insert(dataGridView1.Columns.Count, checkBoxColumn);
+				UpdateDataGridView(data.ToList());
 			}
 			catch (Exception ex)
 			{
@@ -212,7 +160,30 @@ namespace ClientWeb
 
 		private void EditButton_Click(object sender, EventArgs e)
 		{
-
+			if (dataGridView1.CurrentRow == null)
+				return;
+			var selectedRow = dataGridView1.CurrentRow;
+			var value = selectedRow.Cells["Id"].Value;
+			switch (_currentEntityType)
+			{
+				case "Library":
+					var library = new LibraryDTO() { Id = Convert.ToInt32(value.ToString()) };
+					var libraryorm = new UpdateLibraryForm(library);
+					libraryorm.Show();
+					break;
+				case "User":
+					var user = new UserDTO() { Id = Convert.ToInt32(value.ToString()) };
+					var userForm = new UpdateUserForm(user);
+					userForm.Show();
+					break;
+				case "Book":
+					var book = new BookDTO() { Id = Convert.ToInt32(value.ToString()) };
+					var bookForm = new UpdateBookForm(book);
+					bookForm.Show();
+					break;
+				default:
+					throw new ArgumentException("Invalid entity type");
+			};
 		}
 
 		private async void DeleteButton_Click(object sender, EventArgs e)
@@ -257,6 +228,24 @@ namespace ClientWeb
 			response.EnsureSuccessStatusCode();
 		}
 
+		private void UpdateDataGridView(object dataSource)
+		{
+			dataGridView1.DataSource = dataSource;
+			if (dataGridView1.Columns.Contains("Select"))
+			{
+				dataGridView1.Columns.Remove("Select");
+			}
+			DataGridViewCheckBoxColumn checkBoxColumn = new DataGridViewCheckBoxColumn
+			{
+				Name = "Select",
+				HeaderText = "Select",
+				FalseValue = false,
+				TrueValue = true
+			};
+			dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+			dataGridView1.AutoResizeRows(DataGridViewAutoSizeRowsMode.AllCells);
+		}
+
 		private void RadioButton_CheckedChanged(object sender, EventArgs e)
 		{
 			ShowFilteredUsers();
@@ -270,9 +259,18 @@ namespace ClientWeb
 			else if (UserRadioButton.Checked)
 				filtered = _users.Where(u => u.Role == "User");
 
-			dataGridView1.DataSource = filtered
-				.Select(u => new { u.Id, u.Name, u.Email, u.Role })
-				.ToList();
+			UpdateDataGridView(filtered
+				.Select(u => new { u.Id, u.Name, u.Surname, u.Email, u.Password, u.ContactNumber, u.Role })
+				.ToList());
+		}
+
+		private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+		{
+			foreach (DataGridViewColumn column in dataGridView1.Columns)
+			{
+				column.MinimumWidth = 50;
+				column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+			}
 		}
 	}
 }

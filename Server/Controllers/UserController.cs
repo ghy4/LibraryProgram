@@ -65,14 +65,19 @@ namespace Server.Controllers
         // PUT: api/User/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, UserDTO user)
+        public async Task<IActionResult> PutUser(int id, [FromBody] UserDTO user)
         {
 			if (id != user.Id)
 				return BadRequest();
+
+			var existingUser = await _services.GetById(id);
+			if (existingUser == null)
+				return NotFound();
+
 			try
-            {
-				user.Password = Encryptor.CreateMD5(user.Password);
-				await _services.Update(_mapper.Map<User>(user));
+			{
+                _mapper.Map(user, existingUser);
+				await _services.Update(existingUser);
             }
             catch (DbUpdateConcurrencyException)
             {

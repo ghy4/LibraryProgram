@@ -51,7 +51,7 @@ namespace Database.Services
 		}
 		public async Task<bool> Update(User entity)
 		{
-			_dbContext.Users.Update(entity);
+			_dbContext.Users.Attach(entity);
 			return await _dbContext.SaveChangesAsync() >= 1;
 		}
 	}
