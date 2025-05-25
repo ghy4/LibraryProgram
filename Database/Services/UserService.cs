@@ -41,6 +41,22 @@ namespace Database.Services
 			var reviews = await _dbContext.Reviews.Where(x => x.UserId == id).ToListAsync();
 			return reviews;
 		}
+		public async Task<bool> AddReviewAsync(int userId, int bookId, decimal rating, string reviewText)
+		{
+			var review = new Review
+			{
+				UserId = userId,
+				BookId = bookId,
+				Rating = rating,
+				ReviewText = reviewText,
+				ReviewDate = DateTime.Now
+			};
+
+			await _dbContext.Reviews.AddAsync(review);
+			var result = await _dbContext.SaveChangesAsync();
+
+			return result >= 1;
+		}
 		public async Task<bool> RemoveById(int id)
 		{
 			var usertoremove = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);

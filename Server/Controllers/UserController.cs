@@ -123,10 +123,42 @@ namespace Server.Controllers
 
             return NoContent();
         }
-        private bool UserExists(int id)
-        {
-            return (_services.GetById(id) != null);
-        }
+		[HttpPost("{userId}/review")]
+		public async Task<ActionResult> AddReview(int userId, CreateReviewDTO newreview)
+		{
+			var user = await _services.GetById(userId);
+			if (user == null)
+				return BadRequest("Invalid user");
+
+			if (newreview.UserId != userId)
+				return BadRequest("User ID mismatch");
+
+			try
+			{
+				var reviewEntity = _mapper.Map<Review>(newreview);
+
+				var result = await _services.AddReviewAsync(userId, newreview.BookId, reviewEntity.Rating, reviewEntity.ReviewText);
+				if (!result)
+					return BadRequest("Failed to add review");
+
+				return Ok();
+			}
+			catch (DbUpdateConcurrencyException)
+			{
+				if (!UserExists(userId))
+				{
+					return NotFound("User not found");
+				}
+				else
+				{
+					throw;
+				}
+			}
+		}
+		private bool UserExists(int id)
+		{
+			return (_services.GetById(id) != null);
+		}
 
 		[HttpPost("login")]
 		public async Task<IActionResult> Login([FromBody] LoginRequest request)

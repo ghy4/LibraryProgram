@@ -26,7 +26,7 @@ namespace Database.Services
 
 		public async Task<ICollection<Library>> GetAll()
 		{
-			var libraries = await _dbContext.Libraries.Include(b=>b.Books).ToListAsync();
+			var libraries = await _dbContext.Libraries.Include(b=>b.Books).ThenInclude(b=>b.Reviews).ToListAsync();
 			return libraries;
 		}
 

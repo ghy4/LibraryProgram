@@ -5,7 +5,7 @@ namespace Server.DTOModels
 {
 	public class LibraryDTO : UpdateLibraryDTO
 	{
-		public ICollection<Book>? Books { get; set; }
+		public ICollection<BookDTO>? Books { get; set; }
 		public override string ToString() => Name;
 	}
 	public class CreateLibraryDTO

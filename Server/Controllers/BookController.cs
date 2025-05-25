@@ -82,34 +82,6 @@ namespace Server.Controllers
 			return NoContent();
 		}
 
-		[Route("AddReview")]
-		[HttpPatch]
-		public async Task<ActionResult> AddReview(int bookid, CreateReviewDTO newreview)
-		{
-			var book = _services.GetById(bookid);
-			if (book == null) 
-				return BadRequest();
-			if (bookid != newreview.BookId)
-				return BadRequest();
-			try
-			{
-				Ok(await _services.AddReview(_mapper.Map<Review>(newreview)));
-			}
-			catch (DbUpdateConcurrencyException)
-			{
-				if (!BookExists(bookid))
-				{
-					return NotFound();
-				}
-				else
-				{
-					throw;
-				}
-			}
-			return NoContent();
-
-		}
-
 
         // POST: api/Book
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

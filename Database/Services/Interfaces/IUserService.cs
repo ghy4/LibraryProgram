@@ -11,6 +11,7 @@ namespace Database.Services.Interfaces
     {
         public Task<ICollection<Review>?> GetReviewsAsync(int id);
         public Task<User?> GetByEmail(string email);
+        public Task<bool> AddReviewAsync(int userId, int bookId, decimal rating, string reviewText);
 
 	}
 }
