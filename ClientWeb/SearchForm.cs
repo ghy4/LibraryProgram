@@ -1,4 +1,5 @@
-﻿using Data.Models;
+﻿using ClientWeb.Services;
+using Data.Models;
 using Server.DTOModels;
 using System;
 using System.Collections.Generic;
@@ -17,79 +18,65 @@ namespace ClientWeb
 {
 	public partial class SearchForm : Form
 	{
-		private readonly HttpClient _httpClient;
-		private int _libraryId;
-		public SearchForm(int libraryId)
+		private readonly LibraryHttpClientService _libraryService;
+		private readonly int _libraryId;
+		private List<LibraryDTO> _libraries;
+
+		public SearchForm(LibraryHttpClientService libraryService, int libraryId)
 		{
 			InitializeComponent();
-			_httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7221") };
+			_libraryService = libraryService;
 			_libraryId = libraryId;
+		}
+
+		private async Task LoadLibrariesAsync()
+		{
+			try
+			{
+				_libraries = await _libraryService.GetLibrariesAsync();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Failed to load libraries: " + ex.Message);
+			}
 		}
 
 		private async void TitleSearchButton_Click(object sender, EventArgs e)
 		{
-			try
+			if (string.IsNullOrWhiteSpace(TitleTextBox.Text))
 			{
-				if (string.IsNullOrWhiteSpace(TitleTextBox.Text))
-				{
-					MessageBox.Show("Please fill Name field.");
-					return;
-				}
-				var response = await _httpClient.GetAsync("/api/Library/Libraries");
-				response.EnsureSuccessStatusCode();
-
-
-				var content = await response.Content.ReadAsStreamAsync();
-				var libraries = await JsonSerializer.DeserializeAsync<List<LibraryDTO>>(content, new JsonSerializerOptions
-				{
-					PropertyNameCaseInsensitive = true
-				});
-				var book = libraries[_libraryId].Books.FirstOrDefault(x => x.Title == TitleTextBox.Text, null);
-				if (book == null)
-				{
-					MessageBox.Show("No book with that title");
-					return;
-				}
-				else
-					MessageBox.Show($"Title: {book.Title}\nAuthor: {book.Author}\nDescription: {book.Description}");
+				MessageBox.Show("Please fill Name field.");
+				return;
 			}
-			catch (Exception ex)
-			{
-				MessageBox.Show("Error: " + ex.Message);
-			}
+
+			if (_libraries == null)
+				await LoadLibrariesAsync();
+
+			var book = _libraries[_libraryId].Books.FirstOrDefault(b => string.Equals(b.Title, TitleTextBox.Text, StringComparison.OrdinalIgnoreCase));
+
+			if (book == null)
+				MessageBox.Show("No book with that title");
+			else
+				MessageBox.Show($"Title: {book.Title}\nAuthor: {book.Author}\nDescription: {book.Description}\n Rating: {book.Rating}");
 		}
 
 		private async void IdSearchButton_Click(object sender, EventArgs e)
 		{
-			try
+			if (string.IsNullOrWhiteSpace(IdTextBox.Text) || !int.TryParse(IdTextBox.Text, out int bookId))
 			{
-				if (string.IsNullOrWhiteSpace(IdTextBox.Text))
-				{
-					MessageBox.Show("Please fill Id field.");
-					return;
-				}
-				var response = await _httpClient.GetAsync("/api/Library/Libraries");
-				response.EnsureSuccessStatusCode();
-
-
-				var content = await response.Content.ReadAsStreamAsync();
-				var libraries = await JsonSerializer.DeserializeAsync<List<LibraryDTO>>(content, new JsonSerializerOptions
-				{
-					PropertyNameCaseInsensitive = true
-				});
-				var book = libraries[_libraryId].Books.FirstOrDefault(x => x.Id == Convert.ToInt32(IdTextBox.Text), null);
-				if (book == null)
-				{
-					MessageBox.Show("No book with that Id");
-					return;
-				}
-				else
-					MessageBox.Show($"Title: {book.Title}\nAuthor: {book.Author}\nDescription: {book.Description}");
+				MessageBox.Show("Please fill Id field with a valid number.");
+				return;
 			}
-			catch (Exception ex)
-			{
-				MessageBox.Show("Error: " + ex.Message);
-			}
+
+			if (_libraries == null)
+				await LoadLibrariesAsync();
+
+			var book = _libraries[_libraryId].Books.FirstOrDefault(b => b.Id == bookId);
+
+			if (book == null)
+				MessageBox.Show("No book with that Id");
+			else
+				MessageBox.Show($"Title: {book.Title}\nAuthor: {book.Author}\nDescription: {book.Description}");
 		}
 	}
 }

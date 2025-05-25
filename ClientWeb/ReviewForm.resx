@@ -117,20 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="PasswordIcon.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        EAAACxABrSO9dQAAAf9JREFUaEPtmEtKHUEUhi8IEtAViFEHkkWoCzAjwYG6Bx8hWzDEx0AzDoIzH7gA
-        dSmCM1/JOAlE8Pl/TR+4A+Vap6u7WqgPPrhV3PqrTldX30t3Mpn3w4hclqfyTP4r5TN9S/KjbC3D8qe8
-        l089fJBHcky2ilnJVWeR/+WenJOf5EApn+flvryVfPevnJGt4Kt8lCyMAri1ejEqD6TtzheZFHaChdzJ
-        RToC4SwxloxkO8OBtdvJU4SxIsn4I4foaJpdabdTVQ4lWTtFq0E4BzydONhvORO94OnFA4BMnn6Nwb0d
-        azcMO/xVbtNgTiST8oiNxYIk87hoNcS5ZNLxohUHfmfI5B9AY/BDxqSDRSsOZJFJdmMwIcamrtxXyYX0
-        IBfi5V0V0i835Y20CVJ5LdclawpmQ74UmtI1GQxXgcETRSstk5K1sKZg7Cq0Bfd6ciE1kQvJhdRELqRq
-        IR/kD/lL8u9gu+zzkqwQirAMc0t6sYxg3ANL2AnLMH9LL5YRjHtgyaW0DPNCerGMYNwDS75JyzBXpRfL
-        CMY9sKRPWoZJnxfLCMY9sAvLiJkVTMzJY2YFE2Py7gNf5aCDez3ugV18lhSA03RUIGkhMcmF5EJqIheS
-        C6kJ93rsBR0vx1IzJVnLVdEKhHetdhXa4ncZDC+MKcZ2JqXsBEW88hK703kGYRB6UbF2TjsAAAAASUVO
-        RK5CYII=
-</value>
-  </data>
 </root>

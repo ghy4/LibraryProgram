@@ -115,6 +115,7 @@
 			Controls.Add(AddressLabel);
 			Controls.Add(NameLabel);
 			Name = "UpdateLibraryForm";
+			StartPosition = FormStartPosition.CenterScreen;
 			Text = "UpdateLibrary";
 			Load += UpdateLibraryForm_Load;
 			ResumeLayout(false);

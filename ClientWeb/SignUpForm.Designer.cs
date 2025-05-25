@@ -209,6 +209,7 @@
 			Controls.Add(NameTextBox);
 			Name = "SignUpForm";
 			ShowIcon = false;
+			StartPosition = FormStartPosition.CenterScreen;
 			Text = "SignUp";
 			ResumeLayout(false);
 			PerformLayout();

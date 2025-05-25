@@ -40,6 +40,8 @@
 			UserRadioButton = new RadioButton();
 			panel1 = new Panel();
 			AllRadioButton = new RadioButton();
+			BookAddButton = new Button();
+			BookAddTextBox = new TextBox();
 			menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
 			SuspendLayout();
@@ -94,11 +96,10 @@
 			dataGridView1.RowTemplate.Height = 29;
 			dataGridView1.Size = new Size(1444, 837);
 			dataGridView1.TabIndex = 1;
-			dataGridView1.DataBindingComplete += dataGridView1_DataBindingComplete;
 			// 
 			// EditButton
 			// 
-			EditButton.Location = new Point(153, 40);
+			EditButton.Location = new Point(140, 40);
 			EditButton.Name = "EditButton";
 			EditButton.Size = new Size(122, 36);
 			EditButton.TabIndex = 2;
@@ -118,7 +119,7 @@
 			// 
 			// DeleteButton
 			// 
-			DeleteButton.Location = new Point(306, 40);
+			DeleteButton.Location = new Point(268, 41);
 			DeleteButton.Name = "DeleteButton";
 			DeleteButton.Size = new Size(122, 36);
 			DeleteButton.TabIndex = 4;
@@ -129,7 +130,7 @@
 			// AdminRadioButton
 			// 
 			AdminRadioButton.AutoSize = true;
-			AdminRadioButton.Location = new Point(466, 44);
+			AdminRadioButton.Location = new Point(448, 44);
 			AdminRadioButton.Name = "AdminRadioButton";
 			AdminRadioButton.Size = new Size(88, 29);
 			AdminRadioButton.TabIndex = 5;
@@ -141,7 +142,7 @@
 			// UserRadioButton
 			// 
 			UserRadioButton.AutoSize = true;
-			UserRadioButton.Location = new Point(574, 44);
+			UserRadioButton.Location = new Point(556, 44);
 			UserRadioButton.Name = "UserRadioButton";
 			UserRadioButton.Size = new Size(71, 29);
 			UserRadioButton.TabIndex = 6;
@@ -152,7 +153,7 @@
 			// 
 			// panel1
 			// 
-			panel1.Location = new Point(434, 40);
+			panel1.Location = new Point(416, 40);
 			panel1.Name = "panel1";
 			panel1.Size = new Size(298, 37);
 			panel1.TabIndex = 7;
@@ -160,7 +161,7 @@
 			// AllRadioButton
 			// 
 			AllRadioButton.AutoSize = true;
-			AllRadioButton.Location = new Point(651, 44);
+			AllRadioButton.Location = new Point(633, 44);
 			AllRadioButton.Name = "AllRadioButton";
 			AllRadioButton.Size = new Size(55, 29);
 			AllRadioButton.TabIndex = 8;
@@ -169,11 +170,30 @@
 			AllRadioButton.UseVisualStyleBackColor = true;
 			AllRadioButton.CheckedChanged += RadioButton_CheckedChanged;
 			// 
+			// BookAddButton
+			// 
+			BookAddButton.Location = new Point(731, 41);
+			BookAddButton.Name = "BookAddButton";
+			BookAddButton.Size = new Size(122, 36);
+			BookAddButton.TabIndex = 9;
+			BookAddButton.Text = "Book-Add";
+			BookAddButton.UseVisualStyleBackColor = true;
+			BookAddButton.Click += BookAddButton_Click;
+			// 
+			// BookAddTextBox
+			// 
+			BookAddTextBox.Location = new Point(871, 45);
+			BookAddTextBox.Name = "BookAddTextBox";
+			BookAddTextBox.Size = new Size(114, 32);
+			BookAddTextBox.TabIndex = 10;
+			// 
 			// AdminPanel
 			// 
 			AutoScaleDimensions = new SizeF(10F, 25F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(1478, 941);
+			Controls.Add(BookAddTextBox);
+			Controls.Add(BookAddButton);
 			Controls.Add(AllRadioButton);
 			Controls.Add(UserRadioButton);
 			Controls.Add(AdminRadioButton);
@@ -188,8 +208,9 @@
 			Margin = new Padding(4);
 			Name = "AdminPanel";
 			ShowIcon = false;
+			StartPosition = FormStartPosition.CenterScreen;
 			Text = "Admin Panel";
-			Load += AdminPanel_LoadAsync;
+			Load += AdminPanel_Load;
 			menuStrip1.ResumeLayout(false);
 			menuStrip1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
@@ -211,5 +232,7 @@
 		private RadioButton UserRadioButton;
 		private Panel panel1;
 		private RadioButton AllRadioButton;
+		private Button BookAddButton;
+		private TextBox BookAddTextBox;
 	}
 }

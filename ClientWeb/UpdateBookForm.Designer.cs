@@ -140,6 +140,7 @@
 			Controls.Add(AuthorLabel);
 			Controls.Add(TitleLabel);
 			Name = "UpdateBookForm";
+			StartPosition = FormStartPosition.CenterScreen;
 			Text = "UpdateBook";
 			Load += UpdateBookForm_Load;
 			ResumeLayout(false);

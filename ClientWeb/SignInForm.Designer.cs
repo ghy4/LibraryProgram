@@ -31,6 +31,7 @@ namespace ClientWeb
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SignInForm));
 			SingInButton = new Button();
 			EmailTextBox = new TextBox();
 			PasswordTextBox = new TextBox();
@@ -48,7 +49,7 @@ namespace ClientWeb
 			SingInButton.Name = "SingInButton";
 			SingInButton.Size = new Size(250, 60);
 			SingInButton.TabIndex = 3;
-			SingInButton.Text = "Sing In";
+			SingInButton.Text = "Sign In";
 			SingInButton.UseVisualStyleBackColor = true;
 			SingInButton.Click += SingInButton_Click;
 			// 
@@ -66,11 +67,10 @@ namespace ClientWeb
 			// 
 			PasswordTextBox.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
 			PasswordTextBox.Location = new Point(472, 310);
-			PasswordTextBox.Multiline = true;
 			PasswordTextBox.Name = "PasswordTextBox";
 			PasswordTextBox.PasswordChar = '*';
 			PasswordTextBox.PlaceholderText = "Enter your password";
-			PasswordTextBox.Size = new Size(350, 34);
+			PasswordTextBox.Size = new Size(350, 32);
 			PasswordTextBox.TabIndex = 2;
 			// 
 			// EmailLabel
@@ -100,13 +100,13 @@ namespace ClientWeb
 			SingUpButton.Name = "SingUpButton";
 			SingUpButton.Size = new Size(250, 60);
 			SingUpButton.TabIndex = 4;
-			SingUpButton.Text = "Sing up";
+			SingUpButton.Text = "Sign up";
 			SingUpButton.UseVisualStyleBackColor = true;
 			SingUpButton.Click += Sing_up_Click;
 			// 
 			// PasswordIcon
 			// 
-			PasswordIcon.Image = Image.FromStream(new MemoryStream(Properties.Resources.password_lock));
+			PasswordIcon.Image = (Image)resources.GetObject("PasswordIcon.Image");
 			PasswordIcon.Location = new Point(859, 309);
 			PasswordIcon.Name = "PasswordIcon";
 			PasswordIcon.Size = new Size(34, 34);
@@ -130,6 +130,7 @@ namespace ClientWeb
 			Controls.Add(SingInButton);
 			Name = "SignInForm";
 			ShowIcon = false;
+			StartPosition = FormStartPosition.CenterScreen;
 			Text = "SingIn";
 			((System.ComponentModel.ISupportInitialize)PasswordIcon).EndInit();
 			ResumeLayout(false);

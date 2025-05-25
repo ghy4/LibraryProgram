@@ -1,4 +1,5 @@
-﻿using Server.DTOModels;
+﻿using ClientWeb.Services;
+using Server.DTOModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,61 +15,73 @@ namespace ClientWeb
 {
 	public partial class UpdateUserForm : Form
 	{
-		private readonly HttpClient _httpClient;
-		private UserDTO _user;
-		public UpdateUserForm(UserDTO user)
+		private readonly UserHttpClientService _userService;
+		private UserDTO? _user;
+		private readonly bool _isEditMode;
+
+		public UpdateUserForm(UserHttpClientService userService, UserDTO? user = null)
 		{
 			InitializeComponent();
-			_httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7221") };
+			_userService = userService;
 			_user = user;
+			_isEditMode = user != null;
+		}
+
+		private async void UpdateUserForm_Load(object sender, EventArgs e)
+		{
+			if (_isEditMode)
+			{
+				var user = await _userService.GetUserByIdAsync(_user!.Id);
+
+				NameTextBox.Text = user.Name;
+				SurnameTextBox.Text = user.Surname;
+				EmailTextBox.Text = user.Email;
+				ContactNumberTextBox.Text = user.ContactNumber;
+				RoleComboBox.SelectedIndex = user.Role == "Admin" ? 1 : 0;
+
+				_user = user;
+				this.Text = "Update User";
+				SaveButton.Text = "Update";
+			}
+			else
+			{
+				this.Text = "Create User";
+				SaveButton.Text = "Create";
+				RoleComboBox.SelectedIndex = 0;
+			}
 		}
 
 		private async void SaveButton_Click(object sender, EventArgs e)
 		{
 			try
 			{
-
-				var updatedUser = new UserDTO
+				var user = new UserDTO
 				{
-					Id = _user.Id,
+					Id = _user?.Id ?? 0,
 					Name = NameTextBox.Text,
 					Surname = SurnameTextBox.Text,
 					Email = EmailTextBox.Text,
 					ContactNumber = ContactNumberTextBox.Text,
-					Role = RoleComboBox.SelectedIndex == 0 ? "User" : "Admin",
-					Password =  _user.Password
+					Role = RoleComboBox.SelectedIndex == 1 ? "Admin" : "User",
+					Password = _isEditMode ? _user!.Password : "defaultpassword123"
 				};
-				var json = JsonSerializer.Serialize(updatedUser);
 
-				var content = new StringContent(json, Encoding.UTF8, "application/json");
+				if (_isEditMode)
+				{
+					await _userService.UpdateUserAsync(user);
+				}
+				else
+				{
+					await _userService.CreateUserAsync(user);
+				}
 
-				var response = await _httpClient.PutAsync($"/api/User/{_user.Id}", content);
-				response.EnsureSuccessStatusCode();
+				MessageBox.Show(_isEditMode ? "User updated successfully." : "User created successfully.");
 				this.Close();
 			}
 			catch (Exception ex)
 			{
 				MessageBox.Show("Error: " + ex.Message);
 			}
-		}
-
-		private async void UpdateUserForm_Load(object sender, EventArgs e)
-		{
-			var response = await _httpClient.GetAsync($"/api/User/{_user.Id}");
-			response.EnsureSuccessStatusCode();
-
-
-			var content = await response.Content.ReadAsStreamAsync();
-			var user = await JsonSerializer.DeserializeAsync<UserDTO>(content, new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			});
-			NameTextBox.Text = user.Name;
-			SurnameTextBox.Text = user.Surname;
-			EmailTextBox.Text = user.Email;
-			ContactNumberTextBox.Text = user.ContactNumber;
-			RoleComboBox.SelectedIndex = (user.Role == "User") ? 0 : 1;
-			_user = user;
 		}
 	}
 }

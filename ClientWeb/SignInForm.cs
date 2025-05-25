@@ -14,18 +14,23 @@ using System.Text.Unicode;
 using System.Windows.Forms;
 using Humanizer.Localisation;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using ClientWeb.Services;
 
 namespace ClientWeb
 {
 	public partial class SignInForm : Form
 	{
-		private readonly HttpClient _httpClient;
+		private readonly UserHttpClientService _userService;
+		private readonly LibraryHttpClientService _libraryService;
+		private readonly BookHttpClientService _bookService;
 		private bool flag = true;
 
-		public SignInForm()
+		public SignInForm(UserHttpClientService userService, BookHttpClientService bookService, LibraryHttpClientService libraryService)
 		{
 			InitializeComponent();
-			_httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7221") };
+			_userService = userService;
+			_libraryService = libraryService;
+			_bookService = bookService;
 		}
 
 		private async void SingInButton_Click(object sender, EventArgs e)
@@ -38,46 +43,32 @@ namespace ClientWeb
 				MessageBox.Show("Please enter both email and password.");
 				return;
 			}
-
-			var loginRequest = new { Email = email, Password = password };
-			string json = JsonSerializer.Serialize(loginRequest);
-			var content = new StringContent(json, Encoding.UTF8, "application/json");
 			try
 			{
-				HttpResponseMessage response = await _httpClient.PostAsync("/api/User/login", content);
+				var loginResponse = await _userService.Login(email, password);
 
-				if (response.IsSuccessStatusCode)
+				if (loginResponse == null)
 				{
-					string responseBody = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine(responseBody);
-					var options = new JsonSerializerOptions
-					{
-						PropertyNameCaseInsensitive = true
-					};
-					var loginResponse = JsonSerializer.Deserialize<LoginResponse>(responseBody, options);
+					MessageBox.Show("Invalid email or password.");
+					return;
+				}
 
-					_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
-					Form nextform = loginResponse.User.Role switch
-					{
-						"Admin" => new AdminPanel(),
-						"User" => new MainPage(),
-					};
-					if (nextform != null)
-					{
-						nextform.Show();
-						this.Hide();
-					}
-					else
-					{
-						MessageBox.Show("Unknown user role.");
-					}
+				Form nextForm = loginResponse.User.Role switch
+				{
+					"Admin" => new AdminPanel(_libraryService, _userService, _bookService),
+					"User" => new MainPage(_libraryService, _userService, loginResponse.User.Id),
+					_ => null
+				};
+
+				if (nextForm != null)
+				{
+					nextForm.Show();
+					this.Hide();
 				}
 				else
 				{
-					string errorbody = await response.Content.ReadAsStringAsync();
-					MessageBox.Show(errorbody);
+					MessageBox.Show("Unknown user role.");
 				}
-				//var user = await _httpClient.GetFromJsonAsync<UserDTO>($"/api/User/email?email={email}");
 			}
 			catch (Exception ex)
 			{
@@ -87,7 +78,7 @@ namespace ClientWeb
 
 		private void Sing_up_Click(object sender, EventArgs e)
 		{
-			SignUpForm singInForm = new SignUpForm();
+			SignUpForm singInForm = new SignUpForm(_userService, _libraryService);
 			singInForm.Show();
 			this.Hide();
 		}

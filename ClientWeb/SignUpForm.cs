@@ -10,16 +10,21 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ClientWeb.Services;
+using Database.Services;
+using static ClientWeb.Services.UserHttpClientService;
 
 namespace ClientWeb
 {
 	public partial class SignUpForm : Form
 	{
-		private readonly HttpClient _httpClient;
-		public SignUpForm()
+		private readonly UserHttpClientService _userService;
+		private readonly LibraryHttpClientService _libraryService;
+		public SignUpForm(UserHttpClientService userService, LibraryHttpClientService libraryService)
 		{
 			InitializeComponent();
-			_httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7221") };
+			_userService = userService;
+			_libraryService = libraryService;
 		}
 
 		private async void SignUpButton_Click(object sender, EventArgs e)
@@ -54,30 +59,32 @@ namespace ClientWeb
 				return;
 			} 
 
-			var registerRequest = new RegisterRequest{Name = name, Surname = surname, Email = email, ContactNumber = contactNumber,  Password = password };
-			string json = JsonSerializer.Serialize(registerRequest);
-			var content = new StringContent(json, Encoding.UTF8, "application/json");
 			try
 			{
-				HttpResponseMessage response = await _httpClient.PostAsync("/api/User/register", content);
-
-				if (response.IsSuccessStatusCode)
+				var registerRequest = new RegisterRequest
 				{
-					string responseBody = await response.Content.ReadAsStringAsync();
-					var registerResponse = JsonSerializer.Deserialize<RegisterResponse>(responseBody);
+					Name = name,
+					Surname = surname,
+					Email = email,
+					Password = password,
+					ContactNumber = contactNumber,
+					Role = "User"
+				};
 
-					_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", registerResponse.Token);
+				var registerResponse = await _userService.RegisterAsync(registerRequest);
 
-					MainPage mainPage = new MainPage();
+				if (registerResponse != null)
+				{
+					_userService.SetBearerToken(registerResponse.Token);
+
+					MainPage mainPage = new MainPage(_libraryService, _userService, registerResponse.User.Id);
 					mainPage.Show();
 					this.Hide();
 				}
 				else
 				{
-					string errorbody = await response.Content.ReadAsStringAsync();
-					MessageBox.Show(errorbody);
+					MessageBox.Show("Registration failed.");
 				}
-				//var user = await _httpClient.GetFromJsonAsync<UserDTO>($"/api/User/email?email={email}");
 			}
 			catch (Exception ex)
 			{
@@ -90,7 +97,7 @@ namespace ClientWeb
 
 			if (trimmedEmail.EndsWith("."))
 			{
-				return false; // suggested by @TK-421
+				return false;
 			}
 			try
 			{
@@ -102,15 +109,6 @@ namespace ClientWeb
 				return false;
 			}
 		}
-	}
-	public class RegisterRequest
-	{
-		public string Name { get; set; }
-		public string Surname { get; set; }
-		public string Email { get; set; }
-		public string Password { get; set; }
-		public string ContactNumber { get; set; }
-		public string Role { get; set; } = "User";
 	}
 	public class RegisterResponse
 	{

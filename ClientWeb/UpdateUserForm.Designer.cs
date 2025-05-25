@@ -161,6 +161,7 @@
 			Controls.Add(SurnameLabel);
 			Controls.Add(NameLabel);
 			Name = "UpdateUserForm";
+			StartPosition = FormStartPosition.CenterScreen;
 			Text = "UpdateUserForm";
 			Load += UpdateUserForm_Load;
 			ResumeLayout(false);

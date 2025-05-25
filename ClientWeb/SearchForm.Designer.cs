@@ -106,6 +106,7 @@
 			Controls.Add(TitleTextBox);
 			Controls.Add(TitleLabel);
 			Name = "SearchForm";
+			StartPosition = FormStartPosition.CenterScreen;
 			Text = "SearchForm";
 			ResumeLayout(false);
 			PerformLayout();

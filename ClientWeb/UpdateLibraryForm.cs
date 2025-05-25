@@ -1,4 +1,5 @@
-﻿using Server.DTOModels;
+﻿using ClientWeb.Services;
+using Server.DTOModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,54 +15,65 @@ namespace ClientWeb
 {
 	public partial class UpdateLibraryForm : Form
 	{
-		private readonly HttpClient _httpClient;
-		private LibraryDTO _library;
-		public UpdateLibraryForm(LibraryDTO library)
+		private readonly LibraryHttpClientService _libraryService;
+		private readonly LibraryDTO? _library;
+		private readonly bool _isEditMode;
+
+		public UpdateLibraryForm(LibraryHttpClientService libraryService, LibraryDTO? library = null)
 		{
 			InitializeComponent();
-			_httpClient = new HttpClient { BaseAddress = new Uri("https://localhost:7221") };
+			_libraryService = libraryService;
 			_library = library;
+			_isEditMode = library != null;
+		}
+
+		private async void UpdateLibraryForm_Load(object sender, EventArgs e)
+		{
+			if (_isEditMode)
+			{
+				var library = await _libraryService.GetLibraryByIdAsync(_library!.Id);
+				NameTextBox.Text = library.Name;
+				AddressTextBox.Text = library.Address;
+				NumberTextBox.Text = library.ContactNumber;
+
+				this.Text = "Update Library";
+				SaveButton.Text = "Update";
+			}
+			else
+			{
+				this.Text = "Create Library";
+				SaveButton.Text = "Create";
+			}
 		}
 
 		private async void SaveButton_Click(object sender, EventArgs e)
 		{
 			try
 			{
-				var updatedLibrary = new LibraryDTO
+				var library = new LibraryDTO
 				{
-					Id = _library.Id,
+					Id = _library?.Id ?? 0,
 					Name = NameTextBox.Text,
 					Address = AddressTextBox.Text,
 					ContactNumber = NumberTextBox.Text
 				};
-				var json = JsonSerializer.Serialize(updatedLibrary);
 
-				var content = new StringContent(json, Encoding.UTF8, "application/json");
+				if (_isEditMode)
+				{
+					await _libraryService.UpdateLibraryAsync(library);
+				}
+				else
+				{
+					await _libraryService.CreateLibraryAsync(library);
+				}
 
-				var response = await _httpClient.PutAsync($"/api/Library/{_library.Id}", content);
-				response.EnsureSuccessStatusCode();
+				MessageBox.Show(_isEditMode ? "Library updated successfully." : "Library created successfully.");
 				this.Close();
 			}
 			catch (Exception ex)
 			{
 				MessageBox.Show("Error: " + ex.Message);
 			}
-		}
-
-		private async void UpdateLibraryForm_Load(object sender, EventArgs e)
-		{
-			var response = await _httpClient.GetAsync($"/api/Library/{_library.Id}");
-			response.EnsureSuccessStatusCode();
-
-
-			var content = await response.Content.ReadAsStreamAsync();
-			var library = await JsonSerializer.DeserializeAsync<LibraryDTO>(content, new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			});
-			NameTextBox.Text = library.Name;
-			AddressTextBox.Text = library.Address;
-			NumberTextBox.Text = library.ContactNumber;
 		}
 	}
 }

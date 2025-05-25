@@ -81,6 +81,7 @@
 			MainMenuStrip = menuStrip1;
 			Name = "MainPage";
 			ShowIcon = false;
+			StartPosition = FormStartPosition.CenterScreen;
 			Text = "MainPage";
 			Load += MainPage_Load;
 			menuStrip1.ResumeLayout(false);
